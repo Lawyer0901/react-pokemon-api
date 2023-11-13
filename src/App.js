@@ -10,15 +10,16 @@ export default class App extends Component {
 
   handleSubmit = pokemonName => {
     this.setState({ ...pokemonName });
-    console.log(pokemonName);
+    // console.log(pokemonName);
   };
 
   render() {
+    const { pokemonName } = this.state;
     const { handleSubmit } = this;
     return (
       <div>
         <PokemonForm onSubmit={handleSubmit} />
-        <PokemonInfo />
+        <PokemonInfo pokemonName={pokemonName} />
       </div>
     );
   }

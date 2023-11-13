@@ -7,14 +7,16 @@ class PokemonForm extends Component {
 
   handleChange = ({ target }) => {
     const { name, value } = target;
-    this.setState({ [name]: value });
+    this.setState({ [name]: value.toLowerCase() });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-
+    if (this.state.pokemonName.trim() === '') {
+      return alert('Enter Pokemon Name');
+    }
     this.props.onSubmit(this.state);
-    console.log(this.state);
+    // console.log(this.state);
     this.resetForm();
   };
 
