@@ -1,10 +1,13 @@
 import { Component } from 'react';
 import { getPokemon } from '../services/pokemon-api';
+import PokemonDataView from './PokemonDataView';
+import PokemonPendingView from './PokemonPendingView';
 
 class PokemonInfo extends Component {
   state = {
     pokemon: null,
     error: null,
+    isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -15,6 +18,7 @@ class PokemonInfo extends Component {
   }
 
   fetchPokemon = async pokemonName => {
+    this.setState({ isLoading: true });
     // console.log(pokemonName);
     try {
       const data = await getPokemon(pokemonName);
@@ -22,38 +26,21 @@ class PokemonInfo extends Component {
       // console.log(data);
     } catch (error) {
       this.setState({ error: error.message });
-      console.log(error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   };
   render() {
+    const { pokemon, isLoading, error } = this.state;
+    const { pokemonName } = this.props;
     return (
       <div>
-        {this.state.pokemon ? (
-          <div>
-            <img
-              src={
-                this.state.pokemon.sprites.other['official-artwork']
-                  .front_default
-              }
-              alt={this.state.pokemon.name}
-              width="200"
-            />
-            <p>{this.state.pokemon.name}</p>
-            <ul>
-              {this.state.pokemon.stats.map(entry => {
-                return (
-                  <li key={entry.stat.name}>
-                    <p>
-                      {entry.stat.name}: {entry.base_stat}
-                    </p>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ) : (
-          <p>Введите имя покемона :)</p>
+        {error && (
+          <p>К сожалению мы не смогли найти имя покемона {pokemonName}</p>
         )}
+        {isLoading && <PokemonPendingView />}
+
+        {pokemon && <PokemonDataView pokemon={this.state.pokemon} />}
       </div>
     );
   }
